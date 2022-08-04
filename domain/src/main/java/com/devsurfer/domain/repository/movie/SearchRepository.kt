@@ -1,4 +1,4 @@
-package com.devsurfer.domain.repository
+package com.devsurfer.domain.repository.movie
 
 import com.devsurfer.domain.model.movie.Movie
 

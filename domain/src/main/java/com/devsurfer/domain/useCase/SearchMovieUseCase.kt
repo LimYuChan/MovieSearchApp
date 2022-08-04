@@ -4,7 +4,7 @@ import android.util.Log
 import com.devsurfer.domain.exception.NetworkException
 import com.devsurfer.domain.mapper.NetworkExceptionMapper
 import com.devsurfer.domain.model.movie.Movie
-import com.devsurfer.domain.repository.SearchRepository
+import com.devsurfer.domain.repository.movie.SearchRepository
 import com.devsurfer.domain.state.Failure
 import com.devsurfer.domain.state.ResourceState
 import com.devsurfer.domain.utils.Constants

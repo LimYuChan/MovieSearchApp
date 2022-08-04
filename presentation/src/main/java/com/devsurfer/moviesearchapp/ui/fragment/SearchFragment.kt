@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.devsurfer.domain.state.ResourceState
 import com.devsurfer.moviesearchapp.R
 import com.devsurfer.moviesearchapp.adapter.MovieAdapter
@@ -24,9 +26,17 @@ class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
     private val viewModel: SearchMovieViewModel by viewModels()
+    private val args: SearchFragmentArgs by navArgs()
 
     private val adapter = MovieAdapter{
 
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        args.keyword?.let {
+            viewModel.searchMovie(it, 1, 100)
+        }
     }
 
     override fun onCreateView(
@@ -46,6 +56,10 @@ class SearchFragment : Fragment() {
             })
             buttonSearch.setOnClickListener {
                 viewModel.searchMovie(etSearchKeyword.text.toString(), 1, 100)
+            }
+            buttonRecentSearch.setOnClickListener {
+                val action = SearchFragmentDirections.actionSearchFragmentToRecentSearchViewerFragment()
+                Navigation.findNavController(view).navigate(action)
             }
             rvSearchResult.adapter = adapter
         }

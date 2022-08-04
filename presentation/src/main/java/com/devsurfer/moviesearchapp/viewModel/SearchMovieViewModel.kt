@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devsurfer.domain.model.movie.Movie
 import com.devsurfer.domain.state.ResourceState
+import com.devsurfer.domain.useCase.InsertKeywordUseCase
 import com.devsurfer.domain.useCase.SearchMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchMovieViewModel @Inject constructor(
-    private val searchUseCase: SearchMovieUseCase
+    private val searchUseCase: SearchMovieUseCase,
+    private val insertKeywordUseCase: InsertKeywordUseCase
 ): ViewModel(){
 
     private val _searchResultState = Channel<ResourceState<List<Movie>>>()
@@ -27,6 +29,9 @@ class SearchMovieViewModel @Inject constructor(
     val isLoadViewVisible = _isLoadViewVisible
 
     fun searchMovie(query: String, start: Int, display: Int){
+
+        insertKeywordUseCase.invoke(query)
+
         searchUseCase.invoke(query, start, display).onStart {
             _isLoadViewVisible.value = true
         }.onEach {

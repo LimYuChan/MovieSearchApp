@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "MovieSearchApp"
-include ':app'
+include(":presentation", ":data", ":domain")

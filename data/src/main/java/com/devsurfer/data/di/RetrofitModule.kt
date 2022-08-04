@@ -1,13 +1,16 @@
 package com.devsurfer.data.di
 
+import android.content.Context
 import android.util.Log
 import com.devsurfer.data.BuildConfig
-import com.devsurfer.data.exception.NetworkException
+import com.devsurfer.domain.exception.NetworkException
+import com.devsurfer.data.interceptor.CacheSettingInterceptor
 import com.devsurfer.domain.utils.Constants
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -26,27 +29,13 @@ object RetrofitModule {
             else HttpLoggingInterceptor.Level.NONE
     }
 
-    private val headerInterceptor = Interceptor{ chain ->
-        chain.proceed(chain.request())
-            .newBuilder()
-            .addHeader("X-Naver-Client-Id", BuildConfig.CLIENT_ID)
-            .addHeader("X-Naver-Client-Secret", BuildConfig.CLIENT_SECRET)
-            .build()
-    }
-
     private val exceptionInterceptor = Interceptor{chain ->
-        try{
-            val response = chain.proceed(chain.request())
-           when(response.code){
-               Constants.CODE_BAD_REQUEST -> throw NetworkException.BadRequestException()
-               Constants.CODE_NOT_AVAILABLE_ACCESS_KEY -> throw  NetworkException.NotAvailableAccessKeyException()
-               else-> response
-           }
-        }catch (e: IOException){
-            throw NetworkException.NetworkNotConnectedException()
-        }catch (t: Throwable){
-            Log.d("interceptor", "exception interceptor: ${t.message}")
-            throw NetworkException.UnHandleException()
+        val response = chain.proceed(chain.request())
+        when(response.code){
+            Constants.CODE_INCORRECT_QUERY -> throw NetworkException.IncorrectQueryException()
+            Constants.CODE_INVALID_SEARCH_API -> throw  NetworkException.InvalidSearchApiException()
+            Constants.CODE_SEARCH_SYSTEM_ERROR -> throw NetworkException.SearchSystemErrorException()
+            else-> response
         }
     }
 
@@ -56,10 +45,15 @@ object RetrofitModule {
 
     @Singleton
     @Provides
-    fun provideOkHttp(): OkHttpClient =
+    fun provideCacheSettingInterceptor(@ApplicationContext context: Context): CacheSettingInterceptor = CacheSettingInterceptor(context)
+
+    @Singleton
+    @Provides
+    fun provideOkHttp(cacheSettingInterceptor: CacheSettingInterceptor): OkHttpClient =
         OkHttpClient.Builder()
+            .cache(cacheSettingInterceptor.myCache)
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(headerInterceptor)
+            .addInterceptor(cacheSettingInterceptor)
             .addInterceptor(exceptionInterceptor)
             .build()
 

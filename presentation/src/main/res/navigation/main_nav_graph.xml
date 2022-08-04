@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/searchFragment">
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.devsurfer.moviesearchapp.ui.fragment.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <argument
+            android:name="keyword"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_searchFragment_to_recentSearchViewerFragment"
+            app:destination="@id/recentSearchViewerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recentSearchViewerFragment"
+        android:name="com.devsurfer.moviesearchapp.ui.fragment.RecentSearchViewerFragment"
+        android:label="RecentSearchViewerFragment" >
+        <action
+            android:id="@+id/action_recentSearchViewerFragment_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:popUpTo="@id/searchFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

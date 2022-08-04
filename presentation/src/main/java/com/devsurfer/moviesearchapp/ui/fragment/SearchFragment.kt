@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.devsurfer.domain.state.ResourceState
 import com.devsurfer.moviesearchapp.R
+import com.devsurfer.moviesearchapp.adapter.MovieAdapter
 import com.devsurfer.moviesearchapp.databinding.FragmentSearchBinding
 import com.devsurfer.moviesearchapp.viewModel.SearchMovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +24,10 @@ class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
     private val viewModel: SearchMovieViewModel by viewModels()
+
+    private val adapter = MovieAdapter{
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +47,7 @@ class SearchFragment : Fragment() {
             buttonSearch.setOnClickListener {
                 viewModel.searchMovie(etSearchKeyword.text.toString(), 1, 100)
             }
+            rvSearchResult.adapter = adapter
         }
     }
 
@@ -58,7 +64,7 @@ class SearchFragment : Fragment() {
                     Log.d(TAG, "onResume: $it")
                     when(it){
                         is ResourceState.Success->{
-                            Log.d(TAG, "onResume: $it.data")
+                            adapter.submitList(it.data)
                         }
                         is ResourceState.Error->{
                             Toast.makeText(context, it.failure.message, Toast.LENGTH_SHORT).show()

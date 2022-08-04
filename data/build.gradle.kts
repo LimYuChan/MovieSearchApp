@@ -15,6 +15,9 @@ android {
 
         testInstrumentationRunner = AppConfig.TestInstrumentationRunner
         consumerProguardFiles(AppConfig.ConsumerProguardRules)
+
+        buildConfigField("String", "CLIENT_ID", "\"${getLocalProperty("CLIENT_ID")}\"")
+        buildConfigField("String", "CLIENT_SECRET", "\"${getLocalProperty("CLIENT_SECRET")}\"")
     }
 
     buildTypes {
@@ -52,4 +55,7 @@ dependencies {
     implementation(Dependencies.Okhttp.Okhttp)
     implementation(Dependencies.Okhttp.LoggingInterceptor)
     implementation(Dependencies.Okhttp.UrlConnection)
+}
+fun getLocalProperty(key: String): String{
+    return com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir).getProperty(key)
 }

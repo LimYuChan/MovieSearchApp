@@ -51,6 +51,7 @@ dependencies {
     implementation(Dependencies.AndroidX.ViewPager)
     implementation(Dependencies.AndroidX.ConstraintLayout)
     implementation(Dependencies.AndroidX.SwipeRefreshLayout)
+    implementation(Dependencies.AndroidX.PagingRuntime)
     //view
     implementation(Dependencies.AndroidX.ActivityKtx)
     implementation(Dependencies.AndroidX.FragmentKtx)

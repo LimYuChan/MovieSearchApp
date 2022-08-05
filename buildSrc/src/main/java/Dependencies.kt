@@ -3,6 +3,7 @@ object Dependencies {
         private const val NAVIGATION_VERSION = "2.5.0"
         private const val VIEW_MODEL_VERSION = "2.5.0"
         private const val VIEW_KTX_VERSION = "1.5.0"
+        private const val PAGING_VERSION = "3.1.1"
 
         const val CoreKtx = "androidx.core:core-ktx:1.8.0"
         const val AppCompat = "androidx.appcompat:appcompat:1.4.2"
@@ -19,6 +20,9 @@ object Dependencies {
         const val ActivityKtx = "androidx.activity:activity-ktx:$VIEW_KTX_VERSION"
 
         const val SwipeRefreshLayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+        const val PagingRuntime = "androidx.paging:paging-runtime:$PAGING_VERSION"
+        const val PagingCommonTest = "androidx.paging:paging-common:$PAGING_VERSION"
     }
     object Kotlin{
         const val Coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"

@@ -34,6 +34,7 @@ android {
 
 dependencies {
     implementation(Dependencies.AndroidX.CoreKtx)
+    testImplementation(Dependencies.AndroidX.PagingCommonTest)
     testImplementation(Dependencies.Test.Junit)
     androidTestImplementation(Dependencies.Test.TestExtJunit)
     androidTestImplementation(Dependencies.Test.TestEspressoCore)

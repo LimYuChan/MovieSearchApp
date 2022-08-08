@@ -1,5 +1,6 @@
 package com.devsurfer.moviesearchapp.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil

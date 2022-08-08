@@ -5,7 +5,7 @@ data class Movie(
     val link: String? = null,
     val image: String? = null,
     val subtitle: String? = null,
-    val pupDate: String? = null,
+    val pubDate: String? = null,
     val director: String? = null,
     val actor: String? = null,
     val userRating: String

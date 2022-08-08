@@ -17,32 +17,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchMovieViewModel @Inject constructor(
-    private val insertKeywordUseCase: InsertKeywordUseCase,
-    private val searchPagingUseCase: SearchMoviesUseCase
-): ViewModel(){
-
-    private val _isLoadViewVisible = MutableLiveData(false)
-    val isLoadViewVisible = _isLoadViewVisible
+    private val insertKeywordUseCase: InsertKeywordUseCase, private val searchPagingUseCase: SearchMoviesUseCase
+) : ViewModel() {
 
     private val _pagingDataFlow = Channel<PagingData<Movie>>()
     val pagingDataFlow = _pagingDataFlow.receiveAsFlow()
 
-    fun searchMoviePaging(query: String){
+    fun searchMoviePaging(query: String) {
 
         insertKeywordUseCase.invoke(query)
 
         CoroutineScope(Dispatchers.IO).launch {
-            searchPagingUseCase.invoke(query).flow.onStart {
-                _isLoadViewVisible.value = true
-            }.onEach {
+            searchPagingUseCase.invoke(query).flow.onEach {
                 _pagingDataFlow.send(it)
-            }.onCompletion {
-                _isLoadViewVisible.value = false
             }.launchIn(viewModelScope)
         }
     }
 
-    companion object{
+    companion object {
         private const val TAG = "SearchMovieViewModel"
     }
 }

@@ -9,6 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingVertical="4dp"
         android:id="@+id/item_root">
         <ImageView
             android:layout_width="90dp"
@@ -44,10 +45,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/item_pup_date"
-                android:text="@{@string/movie_pup_date_format(movie.pupDate)}"
+                android:text="@{@string/movie_pup_date_format(movie.pubDate)}"
                 android:textSize="12sp"
                 android:textColor="?android:textColorPrimary"
-                android:visibility="@{movie.pupDate == null ? View.GONE : View.VISIBLE}"
+                android:visibility="@{movie.pubDate == null ? View.GONE : View.VISIBLE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/item_title"/>

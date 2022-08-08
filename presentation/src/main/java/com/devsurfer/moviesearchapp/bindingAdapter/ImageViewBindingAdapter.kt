@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
 
+//Glide 이미지 로드하는 BindingAdapter 입니다.
 object ImageViewBindingAdapter {
     @SuppressLint("CheckResult")
     @JvmStatic

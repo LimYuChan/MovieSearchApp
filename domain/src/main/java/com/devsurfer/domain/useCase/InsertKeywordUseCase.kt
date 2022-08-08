@@ -8,6 +8,8 @@ import com.devsurfer.domain.utils.Constants
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
+//검색 시 최근 검색어를 같이 업데이트 해야하는데
+//최근 검색한 10개의 키워드와 겹치면 추가하지 않도록 구성함
 class InsertKeywordUseCase @Inject constructor(
     private val repository: SearchKeywordRepository
 ) {

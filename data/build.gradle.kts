@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(Dependencies.AndroidX.CoreKtx)
+    implementation(Dependencies.AndroidX.PagingCommonTest)
     testImplementation(Dependencies.Test.Junit)
     androidTestImplementation(Dependencies.Test.TestExtJunit)
     androidTestImplementation(Dependencies.Test.TestEspressoCore)

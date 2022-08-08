@@ -8,6 +8,7 @@ import com.devsurfer.domain.state.ResourceState
 import com.devsurfer.domain.utils.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.io.IOException
 import javax.inject.Inject
 
 class GetCurrentKeyWordsUseCase @Inject constructor(
@@ -18,7 +19,9 @@ class GetCurrentKeyWordsUseCase @Inject constructor(
         try{
             val keywordList = repository.getCurrentItems()
             emit(ResourceState.Success(keywordList))
-        }catch (t: Throwable){
+        }catch (exception: IOException){
+
+        } catch (t: Throwable){
             Log.d(TAG, "invoke error: ${t.localizedMessage}")
             emit(ResourceState.Error(failure = Failure.UnHandle(Constants.ERROR_MESSAGE_SQL_GET_QUERY)))
         }

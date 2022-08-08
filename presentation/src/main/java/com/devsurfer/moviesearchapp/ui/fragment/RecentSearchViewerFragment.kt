@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,6 +23,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+/**
+ * 최근 검색한 결과를 보여주는 화면입니다.
+ * 최근 검색 아이템을 누르면 검색화면으로 keyword를 보내게 됩니다.
+ */
 @AndroidEntryPoint
 class RecentSearchViewerFragment: Fragment() {
 
@@ -60,6 +65,7 @@ class RecentSearchViewerFragment: Fragment() {
                         }
                         is ResourceState.Error->{
                             Log.d(TAG, "onResume: ${it.failure.message}")
+                            Toast.makeText(context, it.failure.message, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

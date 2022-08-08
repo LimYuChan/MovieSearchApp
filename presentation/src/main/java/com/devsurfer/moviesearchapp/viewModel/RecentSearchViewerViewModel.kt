@@ -12,6 +12,9 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
+/**
+ * 최근 검색 결과를 가져오는 ViewModel 입니다.
+ */
 @HiltViewModel
 class RecentSearchViewerViewModel @Inject constructor(
     private val currentKeywordUseCase: GetCurrentKeyWordsUseCase

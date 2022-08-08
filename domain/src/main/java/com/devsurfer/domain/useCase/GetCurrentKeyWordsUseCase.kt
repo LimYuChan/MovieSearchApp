@@ -11,17 +11,15 @@ import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import javax.inject.Inject
 
+//원래는 Exception 별로 다른 UI를 처리 할 예정이지만 해당 프로젝트에서는 Toast 메시지만 보여줘도 될 것 같아서 에러 처리 통합
 class GetCurrentKeyWordsUseCase @Inject constructor(
     private val repository: SearchKeywordRepository
 ){
     operator fun invoke(): Flow<ResourceState<List<SearchKeyword>>> = flow {
-        //원래는 Exception 별로 다른 UI를 처리 할 예정이지만 해당 프로젝트에서는 Toast 메시지만 보여줘도 될 것 같아서 에러 처리 통합
         try{
             val keywordList = repository.getCurrentItems()
             emit(ResourceState.Success(keywordList))
-        }catch (exception: IOException){
-
-        } catch (t: Throwable){
+        }catch (t: Throwable){
             Log.d(TAG, "invoke error: ${t.localizedMessage}")
             emit(ResourceState.Error(failure = Failure.UnHandle(Constants.ERROR_MESSAGE_SQL_GET_QUERY)))
         }

@@ -7,6 +7,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.devsurfer.moviesearchapp.R
 import dagger.hilt.android.AndroidEntryPoint
 
+// Google 에서 권장하는 방식과 같이 Single Activity + Navigation을 사용해 구성하였습니다.
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 

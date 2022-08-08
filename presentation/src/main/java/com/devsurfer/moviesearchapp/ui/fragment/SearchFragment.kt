@@ -25,6 +25,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+/**
+ * 영화를 검색하는 화면입니다.
+ * 화면 생성시 받은 argutment가 있다면 해당 argument로 검색을 실행합니다.
+ */
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
 
@@ -41,7 +45,8 @@ class SearchFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         args.keyword?.let {
-            viewModel.searchMoviePaging(it)
+            viewModel.setLastKeyword(it)
+            viewModel.searchMovie(it)
         }
     }
 
@@ -61,7 +66,9 @@ class SearchFragment : Fragment() {
                 buttonSearch.isEnabled = !str.isNullOrBlank()
             })
             buttonSearch.setOnClickListener {
-                viewModel.searchMoviePaging(etSearchKeyword.text.toString())
+                val keyword = etSearchKeyword.text.toString()
+                viewModel.setLastKeyword(keyword)
+                viewModel.searchMovie(keyword)
             }
             buttonRecentSearch.setOnClickListener {
                 val action = SearchFragmentDirections.actionSearchFragmentToRecentSearchViewerFragment()
@@ -73,6 +80,14 @@ class SearchFragment : Fragment() {
                 adapter.retry()
             }
 
+            //화면이 재생성된다면 마지막에 검색했던 키워드로 재검색
+            viewModel.lastKeyword.observe(viewLifecycleOwner){
+                if(it.isNotBlank()){
+                    viewModel.searchMovie(it)
+                }
+            }
+
+            //Paging Adapter 상태 별 UI 컨트롤 (로딩, 오류)
             viewLifecycleOwner.lifecycleScope.launch {
                 adapter.loadStateFlow.collectLatest{
                     val isListEmpty = it.refresh is LoadState.NotLoading && adapter.itemCount == 0

@@ -9,6 +9,8 @@ import com.devsurfer.domain.repository.movie.SearchRepository
 import com.devsurfer.domain.utils.Constants
 import javax.inject.Inject
 
+
+//Search Repository 참고
 class SearchRepositoryImpl @Inject constructor(
     private val service: SearchService
 ): SearchRepository {

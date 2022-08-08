@@ -4,4 +4,8 @@
     <string name="movie_title_format">제목: %s</string>
     <string name="movie_pup_date_format">출시: %s</string>
     <string name="movie_user_rating_format">평점: %s</string>
+
+    <string name="empty_list_place_holder">검색결과가 존재하지 않습니다.</string>
+    <string name="error_please_retry">검색도중 오류가 발생했습니다.\n다시 시도해주세요.</string>
+    <string name="retry">다시 시도</string>
 </resources>

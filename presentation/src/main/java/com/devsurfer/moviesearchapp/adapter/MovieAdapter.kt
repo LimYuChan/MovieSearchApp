@@ -3,6 +3,7 @@ package com.devsurfer.moviesearchapp.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +13,7 @@ import com.devsurfer.moviesearchapp.databinding.ItemMovieBinding
 
 class MovieAdapter(
     val onItemClick: (Movie) -> Unit
-): ListAdapter<Movie, MovieAdapter.MovieItemViewHolder>(diffUtil){
+): PagingDataAdapter<Movie, MovieAdapter.MovieItemViewHolder>(diffUtil){
 
     inner class MovieItemViewHolder(val binding: ItemMovieBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(data: Movie){
@@ -27,7 +28,7 @@ class MovieAdapter(
         MovieItemViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_movie, parent, false))
 
     override fun onBindViewHolder(holder: MovieItemViewHolder, position: Int) {
-        currentList[position]?.let{ holder.bind(it) }
+        getItem(position)?.let{ holder.bind(it) }
     }
 
     companion object{

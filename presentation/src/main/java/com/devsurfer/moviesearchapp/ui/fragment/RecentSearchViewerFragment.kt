@@ -5,9 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import com.devsurfer.domain.state.ResourceState
 import com.devsurfer.moviesearchapp.R
@@ -17,6 +20,7 @@ import com.devsurfer.moviesearchapp.databinding.FragmentSearchBinding
 import com.devsurfer.moviesearchapp.viewModel.RecentSearchViewerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecentSearchViewerFragment: Fragment() {
@@ -43,22 +47,32 @@ class RecentSearchViewerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvSearchResult.adapter = adapter
+        binding.actionBar.setNavigationOnClickListener {
+            Navigation.findNavController(it).popBackStack()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED){
+                viewModel.currentKeywords.collectLatest {
+                    when(it){
+                        is ResourceState.Success->{
+                            adapter.submitList(it.data)
+                        }
+                        is ResourceState.Error->{
+                            Log.d(TAG, "onResume: ${it.failure.message}")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.getCurrentKeywords()
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            viewModel.currentKeywords.collectLatest {
-                when(it){
-                    is ResourceState.Success->{
-                        adapter.submitList(it.data)
-                    }
-                    is ResourceState.Error->{
-                        Log.d(TAG, "onResume: ${it.failure.message}")
-                    }
-                }
-            }
+
+        viewModel.isLoadViewVisible.observe(viewLifecycleOwner){
+            binding.layoutProgress.isVisible = it
         }
     }
     companion object{

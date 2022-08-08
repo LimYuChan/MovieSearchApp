@@ -1,9 +1,9 @@
 package com.devsurfer.data.di
 
 import com.devsurfer.data.repository.movie.SearchRepositoryImpl
-import com.devsurfer.data.repository.movie.dataSource.SearchRemoteDataSource
 import com.devsurfer.data.repository.searchKeyword.SearchKeywordRepositoryImpl
 import com.devsurfer.data.repository.searchKeyword.dataSource.SearchKeywordDao
+import com.devsurfer.data.service.SearchService
 import com.devsurfer.domain.repository.movie.SearchRepository
 import com.devsurfer.domain.repository.searchKeyword.SearchKeywordRepository
 import dagger.Module
@@ -18,8 +18,8 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideSearchRepository(dataSource: SearchRemoteDataSource): SearchRepository =
-        SearchRepositoryImpl(dataSource)
+    fun provideSearchRepository(service: SearchService): SearchRepository =
+        SearchRepositoryImpl(service)
 
     @Singleton
     @Provides

@@ -1,25 +1,28 @@
 package com.devsurfer.moviesearchapp.ui.fragment
 
 import android.os.Bundle
-import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
-import com.devsurfer.domain.state.ResourceState
+import androidx.paging.LoadState
 import com.devsurfer.moviesearchapp.R
 import com.devsurfer.moviesearchapp.adapter.MovieAdapter
 import com.devsurfer.moviesearchapp.databinding.FragmentSearchBinding
 import com.devsurfer.moviesearchapp.viewModel.SearchMovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -35,7 +38,7 @@ class SearchFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         args.keyword?.let {
-            viewModel.searchMovie(it, 1, 100)
+            viewModel.searchMoviePaging(it)
         }
     }
 
@@ -48,6 +51,7 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+    @OptIn(InternalCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding){
@@ -55,13 +59,45 @@ class SearchFragment : Fragment() {
                 buttonSearch.isEnabled = !str.isNullOrBlank()
             })
             buttonSearch.setOnClickListener {
-                viewModel.searchMovie(etSearchKeyword.text.toString(), 1, 100)
+                viewModel.searchMoviePaging(etSearchKeyword.text.toString())
             }
             buttonRecentSearch.setOnClickListener {
                 val action = SearchFragmentDirections.actionSearchFragmentToRecentSearchViewerFragment()
                 Navigation.findNavController(view).navigate(action)
             }
             rvSearchResult.adapter = adapter
+
+            buttonRetry.setOnClickListener {
+                adapter.retry()
+            }
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                adapter.loadStateFlow.collect{
+                    val isListEmpty = it.refresh is LoadState.NotLoading && adapter.itemCount == 0
+                    textEmptyListPlaceHolder.isVisible = isListEmpty
+                    rvSearchResult.isVisible = !isListEmpty
+                    layoutProgress.isVisible = it.source.refresh is LoadState.Loading
+                    layoutRetry.isVisible = it.source.refresh is LoadState.Error
+
+                    val errorState = it.source.append as? LoadState.Error
+                        ?: it.source.prepend as? LoadState.Error
+                        ?: it.append as? LoadState.Error
+                        ?: it.prepend as? LoadState.Error
+                    errorState?.let { error->
+                        Toast.makeText(
+                            context,
+                            error.error.localizedMessage,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED){
+                viewModel.pagingDataFlow.collectLatest(adapter::submitData)
+            }
         }
     }
 
@@ -69,23 +105,6 @@ class SearchFragment : Fragment() {
         super.onResume()
         with(binding){
             buttonSearch.isEnabled = etSearchKeyword.text.toString().isNotBlank()
-            viewModel.isLoadViewVisible.observe(viewLifecycleOwner){
-                layoutProgress.visibility = if(it) View.VISIBLE else View.GONE
-            }
-
-            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-                viewModel.searchResultState.collectLatest {
-                    Log.d(TAG, "onResume: $it")
-                    when(it){
-                        is ResourceState.Success->{
-                            adapter.submitList(it.data)
-                        }
-                        is ResourceState.Error->{
-                            Toast.makeText(context, it.failure.message, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
         }
     }
 

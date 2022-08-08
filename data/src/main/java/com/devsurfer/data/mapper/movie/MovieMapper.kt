@@ -10,7 +10,7 @@ object MovieMapper {
             link = response.link,
             image = response.image,
             subtitle = response.subtitle,
-            pupDate = response.pupDate,
+            pubDate = response.pubDate,
             director = response.director,
             actor = response.actor,
             userRating = response.userRating

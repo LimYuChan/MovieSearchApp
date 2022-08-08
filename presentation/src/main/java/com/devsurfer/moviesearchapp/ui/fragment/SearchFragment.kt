@@ -1,5 +1,7 @@
 package com.devsurfer.moviesearchapp.ui.fragment
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,7 +22,6 @@ import com.devsurfer.moviesearchapp.adapter.MovieAdapter
 import com.devsurfer.moviesearchapp.databinding.FragmentSearchBinding
 import com.devsurfer.moviesearchapp.viewModel.SearchMovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -32,7 +33,9 @@ class SearchFragment : Fragment() {
     private val args: SearchFragmentArgs by navArgs()
 
     private val adapter = MovieAdapter{
-
+        if(activity != null && isAdded){
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.link)))
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +54,6 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
-    @OptIn(InternalCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding){
@@ -72,7 +74,7 @@ class SearchFragment : Fragment() {
             }
 
             viewLifecycleOwner.lifecycleScope.launch {
-                adapter.loadStateFlow.collect{
+                adapter.loadStateFlow.collectLatest{
                     val isListEmpty = it.refresh is LoadState.NotLoading && adapter.itemCount == 0
                     textEmptyListPlaceHolder.isVisible = isListEmpty
                     rvSearchResult.isVisible = !isListEmpty
@@ -83,6 +85,7 @@ class SearchFragment : Fragment() {
                         ?: it.source.prepend as? LoadState.Error
                         ?: it.append as? LoadState.Error
                         ?: it.prepend as? LoadState.Error
+                        ?: it.refresh as? LoadState.Error
                     errorState?.let { error->
                         Toast.makeText(
                             context,
